@@ -23,12 +23,12 @@ public abstract class BacktrackingSearch <X, V> {
 
     /**
      * The data type that represents an arc in the AC-3 algorithm.
-     * We defind the equals method for this data type.
+     * We defined the equals method for this data type.
      * @param head
      * @param tail
      * @param <X>
      */
-    public  record Arc<X>(X head, X tail){
+    public record Arc<X>(X head, X tail){
         @Override
         public boolean equals(Object o){
             if (this == o){
@@ -41,8 +41,7 @@ public abstract class BacktrackingSearch <X, V> {
                 return false;
             }
             Arc<?> arc = (Arc<?>) o;
-            return Objects.equals(head, arc.head) &&
-                    Objects.equals(tail, arc.tail);
+            return Objects.equals(head, arc.head) && Objects.equals(tail, arc.tail);
         }
     }
 
@@ -74,7 +73,15 @@ public abstract class BacktrackingSearch <X, V> {
         while(!arcs.isEmpty()) {
             //TODO: complete AC-3 algorithm here *inside* the while loop
             // NO need to modify other part of this method.
-
+            unique.remove(arcs.element());
+            if (revise(arcs.element().tail, arcs.element().head)){
+                if (unique.isEmpty()){
+                    return false;
+                }
+                for (X v : problem.getNeighborsOf(arcs.element().tail)){
+                    unique.add(new Arc<>(v, arcs.element().tail));
+                }
+            }
         }
         return true;
     }
@@ -108,6 +115,29 @@ public abstract class BacktrackingSearch <X, V> {
         while(!allVariables.get(u).domain().isEmpty()) {
             //TODO: complete the MAC algorithm *inside* the while loop.
             // NO need to modify other part of this method.
+            //pick a value for the variable u
+            V value = allVariables.get(u).domain().removeFirst();
+            //call deepClone to make a copy of allVariables
+            Map<X,Variable<X,V>> copy = deepClone();
+            allVariables.get(u).domain().clear();
+            allVariables.get(u).domain().add(value);
+            //find all the neighbors of variable u
+            //for each of the neighbors, create an arc, where the head is 'u' and the tail is the neighbor
+            //call AC3 on the queue of those arcs
+            //if AC3 returns true, then call search() recursively
+            //if AC3 or search() returns false, then revert the deep copy we made previously
+            Queue<Arc<X>> arcs = new LinkedList<>();
+            for (X neighbor : problem.getNeighborsOf(u)){
+                arcs.add(new Arc<>(u, neighbor));
+            }
+            if(AC3(arcs)){
+                search();
+            }
+            else {
+                if (!search() || !AC3(arcs)){
+                    revert(copy);
+                }
+            }
         }
         //We cannot find a valid value to assign to variable u.
         //We must backtrack now.

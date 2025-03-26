@@ -23,7 +23,7 @@ public class NQueens implements CSPProblem<Integer,Integer>{
 
     //For a given column i, the neighbors are all other columns j (where j != i).
     public List<Integer> getNeighborsOf(Integer value){
-        List<Integer> neighbors =  new LinkedList<>(DEFAULT_DOMAIN);
+        List<Integer> neighbors = new LinkedList<>(DEFAULT_DOMAIN);
         neighbors.remove(value);
         return neighbors;
     }
@@ -50,6 +50,4 @@ public class NQueens implements CSPProblem<Integer,Integer>{
     public int getN(){
         return N;
     }
-
-
 }
