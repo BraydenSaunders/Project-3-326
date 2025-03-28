@@ -73,13 +73,20 @@ public abstract class BacktrackingSearch <X, V> {
         while(!arcs.isEmpty()) {
             //TODO: complete AC-3 algorithm here *inside* the while loop
             // NO need to modify other part of this method.
-            unique.remove(arcs.element());
-            if (revise(arcs.element().tail, arcs.element().head)){
-                if (unique.isEmpty()){
+            Arc<X> arc = arcs.poll();
+            unique.remove(arc);
+            if (revise(arc.tail, arc.head)){
+                if (getAllVariables().get(arc.tail).domain().isEmpty()){
                     return false;
                 }
-                for (X v : problem.getNeighborsOf(arcs.element().tail)){
-                    unique.add(new Arc<>(v, arcs.element().tail));
+                else {
+                    for (X v : problem.getNeighborsOf(arc.tail)){
+                        Arc<X> newArc = new Arc<>(arc.tail, v);
+                        if (!unique.contains(newArc)){
+                            unique.add(newArc);
+                            arcs.add(newArc);
+                        }
+                    }
                 }
             }
         }
@@ -130,13 +137,11 @@ public abstract class BacktrackingSearch <X, V> {
             for (X neighbor : problem.getNeighborsOf(u)){
                 arcs.add(new Arc<>(u, neighbor));
             }
-            if(AC3(arcs)){
-                search();
+            if(AC3(arcs) && search()){
+                return true;
             }
             else {
-                if (!search() || !AC3(arcs)){
-                    revert(copy);
-                }
+                revert(copy);
             }
         }
         //We cannot find a valid value to assign to variable u.
