@@ -49,10 +49,11 @@ public class Backtracking_NQueens extends BacktrackingSearch<Integer,Integer> {
 
     //implements the MRV heuristic
     public Integer selectUnassigned(){
-        int smallestDomain = csp.getN()+1;
+        int smallestDomain = csp.getN() + 1;
+        System.out.println(smallestDomain);
         Variable<Integer,Integer> mrv = null;
         for(Variable<Integer,Integer> v : getAllVariables().values()){
-            if (!assigned(v.name()) && v.domain().size()<smallestDomain){
+            if (!assigned(v.name()) && v.domain().size() < smallestDomain){
                 smallestDomain = v.domain().size();
                 mrv = v;
             }
@@ -65,7 +66,7 @@ public class Backtracking_NQueens extends BacktrackingSearch<Integer,Integer> {
     }
 
     public static void main(String[] args) {
-        int N = 32;
+        int N = 8;
         NQueens csp = new NQueens(N);
         Backtracking_NQueens agent = new Backtracking_NQueens(csp);
         if (agent.initAC3() && agent.search()){
