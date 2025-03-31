@@ -17,14 +17,15 @@ public class Backtracking_Sudoku extends BacktrackingSearch<Square,Integer>{
      */
     public boolean revise(Square tail, Square head) {
     //TODO:
-        boolean revise = false;
+        boolean revised = false;
         Iterator<Integer> itr = getAllVariables().get(tail).domain().iterator();
         while(itr.hasNext()){
+            int tailValue = itr.next();
             //for each value in tail's domain, there must be a value in head's domain that's different
             //if not, delete the value from the tail's domain
             boolean hasSupport = false;
-            for(int value : getAllVariables().get(tail).domain()){
-                if(getAllVariables().get(head).domain().contains(value)){
+            for(int headValue : getAllVariables().get(head).domain()){
+                if(headValue == tailValue){
                     hasSupport = true;
                     break;
                 }
@@ -33,10 +34,10 @@ public class Backtracking_Sudoku extends BacktrackingSearch<Square,Integer>{
                 //there is no value at the head that supports this tail value
                 //delete the value from the tail
                 itr.remove();
-                revise = true;
+                revised = true;
             }
         }
-        return revise;
+        return revised;
     }
     /**
      * Implementing the Minimum Remaining Values(MRV) ordering heuristic.
