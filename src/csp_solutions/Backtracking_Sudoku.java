@@ -25,7 +25,7 @@ public class Backtracking_Sudoku extends BacktrackingSearch<Square,Integer>{
             //if not, delete the value from the tail's domain
             boolean hasSupport = false;
             for(int headValue : getAllVariables().get(head).domain()){
-                if(headValue == tailValue){
+                if(headValue != tailValue){
                     hasSupport = true;
                     break;
                 }
